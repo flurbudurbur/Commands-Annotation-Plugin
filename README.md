@@ -39,7 +39,10 @@ import dev.flur.commands.CommandInfo;
 @CommandInfo(
     name = "example",
     description = "An example command",
-    permission = "example.use"
+    permission = "example.use",
+    aliases = {"e", "exm"},
+    permissionMessage = "No permission for /example",
+    usage = "/example use"
 )
 public class ExampleCommand {
     // Command implementation

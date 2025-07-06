@@ -19,9 +19,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * An annotation processor that handles {@link CommandInfo} annotations.
+ * <p>
+ * This processor scans for classes annotated with {@code @CommandInfo} and generates
+ * a {@code commands.yml} file containing command definitions in the format required
+ * by Bukkit plugins. The generated file includes all command metadata such as name,
+ * description, permission, usage, and aliases.
+ * <p>
+ * The processor runs during the compilation phase and outputs the generated YAML
+ * to the class output directory, where it can be included in the final JAR file.
+ *
+ * @since 1.0.0
+ * @see CommandInfo
+ */
 @SupportedAnnotationTypes("dev.flur.commands.CommandInfo")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
-public class CommandAnnotationProcessor extends AbstractProcessor {
+public final class CommandAnnotationProcessor extends AbstractProcessor {
+
+    /**
+     * Constructs a new CommandAnnotationProcessor.
+     * <p>
+     * Initializes the processor with an empty command map. Commands will be
+     * collected during the annotation processing rounds.
+     */
+    public CommandAnnotationProcessor() {
+        // Default constructor
+    }
 
     private final Map<String, CommandData> commands = new HashMap<>();
 
@@ -35,7 +59,10 @@ public class CommandAnnotationProcessor extends AbstractProcessor {
                 CommandData data = new CommandData(
                         commandInfo.name(),
                         commandInfo.description(),
-                        commandInfo.permission()
+                        commandInfo.permission(),
+                        commandInfo.permissionMessage(),
+                        commandInfo.usage(),
+                        commandInfo.aliases()
                 );
 
                 commands.put(commandInfo.name(), data);
@@ -70,10 +97,30 @@ public class CommandAnnotationProcessor extends AbstractProcessor {
                 for (CommandData command : commands.values()) {
                     writer.write("  " + command.name() + ":\n");
                     writer.write("    description: \"" + command.description() + "\"\n");
-                    writer.write("    usage: \"/" + command.name() + "\"\n");
+
+                    if (!command.usage().isEmpty()) {
+                        writer.write("    usage: \"" + command.usage() + "\"\n");
+                    } else {
+                        writer.write("    usage: \"/" + command.name() + "\"\n");
+                    }
 
                     if (!command.permission().isEmpty()) {
                         writer.write("    permission: \"" + command.permission() + "\"\n");
+                    }
+
+                    if (!command.permissionMessage().isEmpty()) {
+                        writer.write("    permission-message: \"" + command.permissionMessage() + "\"\n");
+                    }
+
+                    if (command.aliases().length > 0) {
+                        writer.write("    aliases: [");
+                        for (int i = 0; i < command.aliases().length; i++) {
+                            writer.write("\"" + command.aliases()[i] + "\"");
+                            if (i < command.aliases().length - 1) {
+                                writer.write(", ");
+                            }
+                        }
+                        writer.write("]\n");
                     }
 
                     writer.write("\n");
@@ -93,6 +140,12 @@ public class CommandAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private record CommandData(String name, String description, String permission) {
+    private record CommandData(
+            String name, 
+            String description, 
+            String permission,
+            String permissionMessage,
+            String usage,
+            String[] aliases) {
     }
 }
