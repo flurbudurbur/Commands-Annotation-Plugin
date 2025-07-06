@@ -6,7 +6,7 @@
 
     <groupId>dev.flur</groupId>
     <artifactId>commands-annotation-processor</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <repositories>
