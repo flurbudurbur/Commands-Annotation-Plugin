@@ -1,6 +1,6 @@
-package dev.flur.ranks.processor;
+package dev.flur.commands.processor;
 
-import dev.flur.ranks.command.CommandInfo;
+import dev.flur.commands.CommandInfo;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@SupportedAnnotationTypes("dev.flur.ranks.command.CommandInfo")
+@SupportedAnnotationTypes("dev.flur.commands.CommandInfo")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 public class CommandAnnotationProcessor extends AbstractProcessor {
 
